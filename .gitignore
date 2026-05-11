@@ -1,0 +1,13 @@
+# --- NEXT.JS ESPECÍFICO ---
+.next/
+
+# --- DEPENDENCIAS ---
+node_modules/
+
+# --- LOGS Y DEBUGGING ---
+.npm
+
+# --- SISTEMA OPERATIVO ---
+.DS_Store
+.DS_Store?
+._*

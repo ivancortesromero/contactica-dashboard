@@ -14,6 +14,9 @@ services:
     build: ./users_service
     ports:
       - "4000:4000"
+    volumes:
+      - ./users_service:/app
+      - /app/node_modules1
     environment:
       WORDPRESS_API_URL: http://wordpress:80/wp-json/wp/v2
       WORDPRESS_USERNAME: admin
