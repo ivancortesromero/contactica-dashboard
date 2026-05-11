@@ -1,0 +1,54 @@
+services:
+
+  dashboard:
+    container_name: dashboard
+    build: ./dashboard
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+      - wordpress
+
+  api:
+    container_name: users_service
+    build: ./users_service
+    ports:
+      - "4000:4000"
+    environment:
+      WORDPRESS_API_URL: http://wordpress:80/wp-json/wp/v2
+      WORDPRESS_USERNAME: admin
+      WORDPRESS_PASSWORD: admin_password
+    depends_on:
+      - wordpress
+      - wordpress_db
+
+  wordpress:
+    container_name: wordpress_app
+    image: wordpress:latest
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: wordpress_db:3306
+      WORDPRESS_DB_NAME: wordpress_db
+      WORDPRESS_DB_USER: wordpress_user
+      WORDPRESS_DB_PASSWORD: wordpress_password
+    depends_on:
+      - wordpress_db
+
+  wordpress_db:
+    container_name: wordpress_mysql
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress_db
+      MYSQL_USER: wordpress_user
+      MYSQL_PASSWORD: wordpress_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - wordpress_db_data:/var/lib/mysql
+
+volumes:
+  wordpress_db_data:
