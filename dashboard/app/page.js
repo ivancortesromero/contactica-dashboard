@@ -8,21 +8,63 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
 
   // Consumir el API de Express
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/api/users');
+
+      if (!response.ok) {
+        throw new Error('Error fetching users');
+      }
+
+      const data = await response.json();
+      setUsers(data);
+
+    } catch (error) {
+      console.error('Error loading users:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetch('http://localhost:4000/api/users')
-      .then((res) => {
-        if (!res.ok) throw new Error('Error en la red');
-        return res.json();
-      })
-      .then((data) => {
-        setUsers(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error cargando usuarios:", err);
-        setLoading(false);
-      });
+    fetchUsers();
   }, []);
+
+  const handleCreateUser = async (e) => {
+    // 1. Detener la recarga de la página y el envío por URL
+    e.preventDefault();
+
+    // 2. Extraer los datos directamente del formulario usando los "name" de los inputs
+    const formData = new FormData(e.currentTarget);
+
+    const newUser = {
+      full_name: formData.get('full_name'),
+      email: formData.get('email'),
+      telephone: formData.get('telephone'),
+      role: formData.get('role'),
+      verified: e.target.verified?.checked || false
+    };
+
+    try {
+      const response = await fetch('http://localhost:4000/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newUser),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error creating user');
+      }
+
+      await fetchUsers();
+      setActiveModal(null);
+
+    } catch (error) {
+      console.error('Error creating user:', error);
+    }
+  };
 
   // Función para abrir el modal de edición con los datos del usuario
   const handleEditClick = (user) => {
@@ -95,54 +137,49 @@ export default function UsersPage() {
           <div className="modal">
             <button className="close-btn" onClick={() => setActiveModal(null)}>×</button>
             <h2>Create User</h2>
-            <p style={{ marginBottom: '24px' }}>
-              Send an invitation to join your app.
-            </p>
+            
+            {/* ENVUELVE TODO EN UN FORM */}
+            <form onSubmit={handleCreateUser}>
+              <div className="form-group">
+                <label>Full Name</label>
+                <input name="full_name" type="text" required /> {/* AGREGA NAME */}
+              </div>
+      
+              <div className="form-group">
+                <label>Email address</label>
+                <input name="email" type="email" required /> {/* AGREGA NAME */}
+              </div>
+      
+              <div className="form-group">
+                <label>Telephone</label>
+                <input name="telephone" type="text" /> {/* AGREGA NAME */}
+              </div>
+      
+              <div className="form-group">
+                <label>Role</label>
+                <select name="role"> {/* AGREGA NAME */}
+                  <option value="User">User</option>
+                  <option value="Admin">Admin</option>
+                </select>
+              </div>
+      
+              <div className="verified-row">
+                <label>Verified</label>
+                <label className="switch">
+                  <input name="verified" type="checkbox" /> {/* AGREGA NAME */}
+                  <span className="slider"></span>
+                </label>
+              </div>
 
-            <div className="form-group">
-              <label>Full Name</label>
-              <input type="text" placeholder="e.g. John Doe" />
-            </div>
-      
-            <div className="form-group">
-              <label>Email address</label>
-              <input 
-                type="email" 
-                placeholder="name@example.com" 
-              />
-            </div>
-      
-            <div className="form-group">
-              <label>Telephone <span style={{color: 'var(--text-dim)', fontWeight: 'normal'}}>(optional)</span></label>
-              <input type="text" placeholder="+1 234 567 8900" />
-            </div>
-      
-            <div className="form-group">
-              <label>Source</label>
-              <p className="static-data">dashboard</p>
-            </div>
-
-            <div className="form-group">
-              <label>Role</label>
-              <p className="static-data">Suscriptor</p>
-            </div>
-      
-            <div className="verified-row">
-              <label style={{ fontWeight: '500' }}>Verified</label>
-              <label className="switch">
-                <input type="checkbox" />
-                <span className="slider"></span>
-              </label>
-            </div>
-
-            <div className="modal-footer">
-              <button className="btn-secondary" onClick={() => setActiveModal(null)}>
-                Cancel
-              </button>
-              <button className="btn-primary" onClick={() => setActiveModal(null)}>
-                Create User
-              </button>
-            </div>
+              <div className="modal-footer">
+                <button type="button" className="btn-secondary" onClick={() => setActiveModal(null)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn-primary"> {/* ASEGURA TYPE SUBMIT */}
+                  Create User
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
