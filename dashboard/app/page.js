@@ -157,12 +157,14 @@ export default function UsersPage() {
                   <td>{user.verified ? 'Yes' : 'No'}</td>
                   <td style={{ textAlign: 'right' }}>
                     <button
+                      disabled={user.source === 'WordPress'}
                       onClick={() => handleEditClick(user)}
                       style={{background:'none', border:'none', cursor:'pointer', marginRight:'10px'}}
                     >
                       ✏️
                     </button>
                     <button
+                      disabled={user.source === 'WordPress'}
                       onClick={() => {
                         setSelectedUser(user);
                         setActiveModal('delete');
