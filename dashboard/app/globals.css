@@ -133,7 +133,7 @@ input, select {
 }
 
 .btn-danger {
-  background-color: #e1432c; /* El rojo/naranja de tu captura */
+  background-color: #e1432c;
   color: white;
   border: none;
   padding: 10px 24px;
@@ -155,7 +155,6 @@ input, select {
   padding: 10px 0;
 }
 
-/* El interruptor (Toggle Switch) */
 .switch {
   position: relative;
   display: inline-block;
@@ -198,7 +197,6 @@ input:checked + .slider:before {
   transform: translateX(20px);
 }
 
-/* Botón de cerrar (X) en la esquina superior */
 .close-btn {
   position: absolute;
   top: 20px;
@@ -212,10 +210,10 @@ input:checked + .slider:before {
 
 .static-data {
   margin: 0;
-  padding: 12px 0; /* Mismo padding vertical que los inputs para mantener el ritmo */
+  padding: 12px 0;
   color: var(--text-dim);
   font-size: 14px;
-  border-bottom: 1px solid var(--border); /* Una línea sutil para mantener la estructura */
+  border-bottom: 1px solid var(--border);
 }
 
 .action-button {

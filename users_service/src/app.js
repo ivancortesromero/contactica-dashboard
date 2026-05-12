@@ -4,11 +4,9 @@ const axios = require('axios');
 
 const app = express();
 
-// Middleware
-app.use(cors()); // Permite peticiones desde el front
+app.use(cors());
 app.use(express.json());
 
-// Endpoint: Listar todos los usuarios
 app.get('/api/users', async(req, res) => {
   try {
     const wpResponse = await axios.get(
@@ -46,7 +44,6 @@ app.get('/api/users', async(req, res) => {
   }
 });
 
-// Endpoint: Crear usuario (mock)
 app.post('/api/users', async (req, res) => {
 
   try {

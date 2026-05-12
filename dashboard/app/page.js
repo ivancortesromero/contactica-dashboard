@@ -4,10 +4,9 @@ import { useState, useEffect } from 'react';
 export default function UsersPage() {
   const [activeModal, setActiveModal] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [users, setUsers] = useState([]); // Iniciamos con lista vacía
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Consumir el API de Express
   const fetchUsers = async () => {
     try {
       const response = await fetch('http://localhost:4000/api/users');
@@ -31,10 +30,8 @@ export default function UsersPage() {
   }, []);
 
   const handleCreateUser = async (e) => {
-    // 1. Detener la recarga de la página y el envío por URL
     e.preventDefault();
 
-    // 2. Extraer los datos directamente del formulario usando los "name" de los inputs
     const formData = new FormData(e.currentTarget);
 
     const newUser = {
@@ -66,7 +63,6 @@ export default function UsersPage() {
     }
   };
 
-  // Función para abrir el modal de edición con los datos del usuario
   const handleEditClick = (user) => {
     setSelectedUser(user);
     setActiveModal('edit');
@@ -147,7 +143,7 @@ export default function UsersPage() {
               {users.map((user) => (
                 <tr key={user.id}>
                   <td className="user-info">
-                    {/* Usamos las propiedades exactas que vienen del backend */}
+                    {}
                     <div>{user.full_name}</div>
                     <span>{user.email}</span>
                   </td>
@@ -185,28 +181,26 @@ export default function UsersPage() {
         )}
       </div>
 
-      {/* MODAL: CREATE USER */}
       {activeModal === 'create' && (
         <div className="overlay">
           <div className="modal">
             <button className="close-btn" onClick={() => setActiveModal(null)}>×</button>
             <h2>Create User</h2>
             
-            {/* ENVUELVE TODO EN UN FORM */}
             <form onSubmit={handleCreateUser}>
               <div className="form-group">
                 <label>Full Name</label>
-                <input name="full_name" type="text" required /> {/* AGREGA NAME */}
+                <input name="full_name" type="text" required />
               </div>
       
               <div className="form-group">
                 <label>Email address</label>
-                <input name="email" type="email" required /> {/* AGREGA NAME */}
+                <input name="email" type="email" required />
               </div>
       
               <div className="form-group">
                 <label>Telephone</label>
-                <input name="telephone" type="text" /> {/* AGREGA NAME */}
+                <input name="telephone" type="text" /> 
               </div>
       
               <div className="form-group">
