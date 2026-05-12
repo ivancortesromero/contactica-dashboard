@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 
 export default function UsersPage() {
   const [activeModal, setActiveModal] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]); // Iniciamos con lista vacía
   const [loading, setLoading] = useState(true);
 
@@ -22,6 +23,12 @@ export default function UsersPage() {
         setLoading(false);
       });
   }, []);
+
+  // Función para abrir el modal de edición con los datos del usuario
+  const handleEditClick = (user) => {
+    setSelectedUser(user);
+    setActiveModal('edit');
+  };
 
   return (
     <main className="container">
@@ -67,7 +74,12 @@ export default function UsersPage() {
                   </td>
                   <td style={{ textAlign: 'center', opacity: 0.5 }}>🕒</td>
                   <td style={{ textAlign: 'right' }}>
-                    <button onClick={() => setActiveModal('edit')} style={{background:'none', border:'none', cursor:'pointer', marginRight:'10px'}}>✏️</button>
+                    <button
+                      onClick={() => handleEditClick(user)}
+                      style={{background:'none', border:'none', cursor:'pointer', marginRight:'10px'}}
+                    >
+                      ✏️
+                    </button>
                     <button onClick={() => setActiveModal('delete')} style={{background:'none', border:'none', cursor:'pointer'}}>🗑️</button>
                   </td>
                 </tr>
@@ -159,34 +171,44 @@ export default function UsersPage() {
       )}
 
       {/* MODAL: EDIT USER */}
-      {activeModal === 'edit' && (
+      {activeModal === 'edit' && selectedUser && (
         <div className="overlay">
           <div className="modal">
             <button className="close-btn" onClick={() => setActiveModal(null)}>×</button>
             <h2>Edit User</h2>
             <p style={{ marginBottom: '24px' }}>
-              Update details for <strong>Carlangas Zipatoque</strong>
+              Update details for <strong>{selectedUser.full_name}</strong>
             </p>
 
             <div className="form-group">
               <label>Full Name</label>
-              <input type="text" defaultValue="Carlangas Zipatoque" />
+              <input 
+                type="text" 
+                defaultValue={selectedUser.full_name} 
+              />
             </div>
 
             <div className="form-group">
               <label>Email</label>
-              <p className="static-data">carlangaszipatoque@gmail.com</p>
+              <p className="static-email">{selectedUser.email}</p>
             </div>
 
             <div className="form-group">
               <label>Telephone <span style={{color: 'var(--text-dim)', fontWeight: 'normal'}}>(optional)</span></label>
-              <input type="text" defaultValue="+1 234 567 8900" />
+              <input 
+                type="text" 
+                defaultValue={selectedUser.telephone || ""} 
+                placeholder="+1 234 567 8900"
+              />
             </div>
 
             <div className="verified-row">
               <label style={{ fontWeight: '500' }}>Verified</label>
               <label className="switch">
-                <input type="checkbox" defaultChecked />
+                <input 
+                  type="checkbox" 
+                  defaultChecked={selectedUser.verified} 
+                />
                 <span className="slider"></span>
               </label>
             </div>
