@@ -1,8 +1,27 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function UsersPage() {
   const [activeModal, setActiveModal] = useState(null);
+  const [users, setUsers] = useState([]); // Iniciamos con lista vacía
+  const [loading, setLoading] = useState(true);
+
+  // Consumir el API de Express
+  useEffect(() => {
+    fetch('http://localhost:4000/api/users')
+      .then((res) => {
+        if (!res.ok) throw new Error('Error en la red');
+        return res.json();
+      })
+      .then((data) => {
+        setUsers(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error cargando usuarios:", err);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <main className="container">
@@ -17,37 +36,45 @@ export default function UsersPage() {
       </header>
 
       <div className="card">
-        <table>
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Joined</th>
-              <th>Source</th>
-              <th>Role</th>
-              <th>Verified</th>
-              <th>Synced</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="user-info">
-                <div>Carlangas Zipatoque</div>
-                <span>carlangaszipatoque@gmail.com</span>
-              </td>
-              {/* Source luce igual que Joined */}
-              <td>May 11, 2026</td>
-              <td>—</td> 
-              <td><span className="badge">Admin</span></td>
-              <td style={{ textAlign: 'center', opacity: 0.5 }}>⊗</td>
-              <td style={{ textAlign: 'center', opacity: 0.5 }}>🕒</td>
-              <td style={{ textAlign: 'right' }}>
-                <button onClick={() => setActiveModal('edit')} style={{background:'none', border:'none', cursor:'pointer', marginRight:'10px'}}>✏️</button>
-                <button onClick={() => setActiveModal('delete')} style={{background:'none', border:'none', cursor:'pointer'}}>🗑️</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        {loading ? (
+          <p style={{ padding: '20px', textAlign: 'center' }}>Loading users...</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Joined</th>
+                <th>Source</th>
+                <th>Role</th>
+                <th>Verified</th>
+                <th>Synced</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id}>
+                  <td className="user-info">
+                    {/* Usamos las propiedades exactas que vienen del backend */}
+                    <div>{user.full_name}</div>
+                    <span>{user.email}</span>
+                  </td>
+                  <td className="last-activity">{user.joined}</td>
+                  <td className="last-activity">{user.source || '—'}</td>
+                  <td><span className="badge">{user.role}</span></td>
+                  <td style={{ textAlign: 'center', opacity: 0.5 }}>
+                    {user.verified ? '✅' : '⊗'}
+                  </td>
+                  <td style={{ textAlign: 'center', opacity: 0.5 }}>🕒</td>
+                  <td style={{ textAlign: 'right' }}>
+                    <button onClick={() => setActiveModal('edit')} style={{background:'none', border:'none', cursor:'pointer', marginRight:'10px'}}>✏️</button>
+                    <button onClick={() => setActiveModal('delete')} style={{background:'none', border:'none', cursor:'pointer'}}>🗑️</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* MODAL: CREATE USER */}
