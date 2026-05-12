@@ -50,26 +50,59 @@ export default function UsersPage() {
         </table>
       </div>
 
-      {/* Los modales se mantienen igual */}
+      {/* MODAL: CREATE USER */}
       {activeModal === 'create' && (
         <div className="overlay">
           <div className="modal">
             <button className="close-btn" onClick={() => setActiveModal(null)}>×</button>
             <h2>Create User</h2>
+            <p style={{ marginBottom: '24px' }}>
+              Send an invitation to join your app.
+            </p>
+
+            <div className="form-group">
+              <label>Full Name</label>
+              <input type="text" placeholder="e.g. John Doe" />
+            </div>
+      
             <div className="form-group">
               <label>Email address</label>
-              <input type="email" placeholder="name@example.com" />
+              <input 
+                type="email" 
+                placeholder="name@example.com" 
+              />
             </div>
+      
+            <div className="form-group">
+              <label>Telephone <span style={{color: 'var(--text-dim)', fontWeight: 'normal'}}>(optional)</span></label>
+              <input type="text" placeholder="+1 234 567 8900" />
+            </div>
+      
+            <div className="form-group">
+              <label>Source</label>
+              <p className="static-data">dashboard</p>
+            </div>
+
             <div className="form-group">
               <label>Role</label>
-              <select>
-                <option>User</option>
-                <option>Admin</option>
-              </select>
+              <p className="static-data">Suscriptor</p>
             </div>
+      
+            <div className="verified-row">
+              <label style={{ fontWeight: '500' }}>Verified</label>
+              <label className="switch">
+                <input type="checkbox" />
+                <span className="slider"></span>
+              </label>
+            </div>
+
             <div className="modal-footer">
-              <button className="btn-secondary" onClick={() => setActiveModal(null)}>Cancel</button>
-              <button className="btn-primary">Create User</button>
+              <button className="btn-secondary" onClick={() => setActiveModal(null)}>
+                Cancel
+              </button>
+              <button className="btn-primary" onClick={() => setActiveModal(null)}>
+                Create User
+              </button>
             </div>
           </div>
         </div>
@@ -115,11 +148,7 @@ export default function UsersPage() {
 
             <div className="form-group">
               <label>Email</label>
-              <input 
-                type="email" 
-                defaultValue="carlangaszipatoque@gmail.com" 
-                style={{ borderColor: 'var(--accent)' }} // Simula el foco azul de la imagen
-              />
+              <p className="static-data">carlangaszipatoque@gmail.com</p>
             </div>
 
             <div className="form-group">

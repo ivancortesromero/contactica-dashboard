@@ -209,3 +209,11 @@ input:checked + .slider:before {
   font-size: 20px;
   cursor: pointer;
 }
+
+.static-data {
+  margin: 0;
+  padding: 12px 0; /* Mismo padding vertical que los inputs para mantener el ritmo */
+  color: var(--text-dim);
+  font-size: 14px;
+  border-bottom: 1px solid var(--border); /* Una línea sutil para mantener la estructura */
+}
