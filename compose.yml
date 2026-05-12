@@ -19,8 +19,8 @@ services:
       - /app/node_modules1
     environment:
       WORDPRESS_API_URL: http://wordpress:80/wp-json/wp/v2
-      WORDPRESS_USERNAME: 'Secret Admin'
-      WORDPRESS_PASSWORD: '9bhf gZQP ltu8 F3pZ NFhY X9h5'
+      WORDPRESS_USERNAME: admin
+      WORDPRESS_PASSWORD: application_password
     depends_on:
       - wordpress
       - wordpress_db
