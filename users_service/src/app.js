@@ -36,4 +36,13 @@ app.get('/api/users', (req, res) => {
   res.json(usersMock);
 });
 
+// Endpoint: Crear usuario (mock)
+app.post('/api/users', (req, res) => {
+  const newUser = req.body;
+  return res.status(201).json({
+    success: true,
+    data: newUser
+  });
+});
+
 module.exports = app;
