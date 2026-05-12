@@ -72,6 +72,23 @@ export default function UsersPage() {
     setActiveModal('edit');
   };
 
+  const handleDeleteUser = async () => {
+    try {
+      await fetch(
+        `http://localhost:4000/api/users/${selectedUser.id}`,
+        {
+          method: 'DELETE'
+        }
+      );
+
+      await fetchUsers();
+      setActiveModal(null);
+
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
+
   const handleSaveChanges = async (e) => {
   e.preventDefault();
   const formData = new FormData(e.currentTarget);
@@ -145,7 +162,19 @@ export default function UsersPage() {
                     >
                       ✏️
                     </button>
-                    <button onClick={() => setActiveModal('delete')} style={{background:'none', border:'none', cursor:'pointer'}}>🗑️</button>
+                    <button
+                      onClick={() => {
+                        setSelectedUser(user);
+                        setActiveModal('delete');
+                    }}
+                      style={{
+                        background:'none',
+                        border:'none',
+                        cursor:'pointer'
+                      }}
+                    >
+                      🗑️
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -213,7 +242,7 @@ export default function UsersPage() {
             <button className="close-btn" onClick={() => setActiveModal(null)}>×</button>
             <h2>Remove User</h2>
             <p>
-              Are you sure you want to remove <strong>Carlangas Zipatoque</strong>?
+              Are you sure you want to remove <strong>{selectedUser?.full_name}</strong>?
               This action cannot be undone.
             </p>
 
@@ -221,7 +250,7 @@ export default function UsersPage() {
               <button className="btn-secondary" onClick={() => setActiveModal(null)}>
                 Cancel
               </button>
-              <button className="btn-danger" onClick={() => setActiveModal(null)}>
+              <button className="btn-danger" onClick={handleDeleteUser}>
                 Remove
               </button>
             </div>

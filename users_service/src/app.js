@@ -119,4 +119,40 @@ app.put('/api/users/:id', async (req, res) => {
   }
 });
 
+app.delete('/api/users/:id', async (req, res) => {
+  try {
+
+    const userId = req.params.id;
+
+    await axios.delete(
+      `http://wordpress/wp-json/wp/v2/users/${userId}`,
+      {
+        auth: {
+          username: process.env.WORDPRESS_USERNAME,
+          password: process.env.WORDPRESS_PASSWORD
+        },
+        params: {
+          force: true,
+          reassign: 1
+        }
+      }
+    );
+
+    return res.json({
+      success: true
+    });
+
+  } catch (error) {
+
+    console.error(
+      error.response?.data || error.message
+    );
+
+    return res.status(500).json({
+      success: false,
+      error: error.response?.data || error.message
+    });
+  }
+});
+
 module.exports = app;
