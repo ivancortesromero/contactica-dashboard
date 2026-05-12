@@ -3,6 +3,7 @@
 
 # --- DEPENDENCIAS ---
 node_modules/
+users_service/package-lock.json
 
 # --- LOGS Y DEBUGGING ---
 .npm

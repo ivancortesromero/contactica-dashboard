@@ -1,17 +1,7 @@
-const express = require('express')
-const cors = require('cors')
+const app = require('./app');
 
-const app = express()
+const PORT = process.env.PORT || 4000;
 
-app.use(cors())
-app.use(express.json())
-
-app.get('/', (req, res) => {
-  res.json({
-    message: 'Users service running'
-  })
-})
-
-app.listen(4000, () => {
-  console.log('Server running on port 4000')
-})
+app.listen(PORT, () => {
+  console.log(`🚀 Backend running on http://localhost:${PORT}`);
+});
