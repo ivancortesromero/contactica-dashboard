@@ -8,33 +8,42 @@ const app = express();
 app.use(cors()); // Permite peticiones desde el front
 app.use(express.json());
 
-// Mock de usuarios (con los campos que definimos para la tabla)
-const usersMock = [
-  {
-    id: 1,
-    full_name: "Carlangas Zipatoque",
-    email: "carlangaszipatoque@gmail.com",
-    role: "Admin",
-    joined: "2026-05-11",
-    source: "WordPress",
-    telephone: "+57 300 1234567",
-    verified: true,
-  },
-  {
-    id: 2,
-    full_name: "Ivan Dario Cortes",
-    email: "ivan.cortes@example.com",
-    role: "User",
-    joined: "2026-05-10",
-    source: "Dashboard",
-    telephone: "+57 313 7654321",
-    verified: false,
-  }
-];
-
 // Endpoint: Listar todos los usuarios
-app.get('/api/users', (req, res) => {
-  res.json(usersMock);
+app.get('/api/users', async(req, res) => {
+  try {
+    const wpResponse = await axios.get(
+      'http://wordpress/wp-json/wp/v2/users',
+      {
+        auth: {
+          username: process.env.WORDPRESS_USERNAME,
+          password: process.env.WORDPRESS_PASSWORD
+        }
+      }
+    );
+
+    const users = wpResponse.data.map((user) => ({
+      id: user.id,
+      full_name: user.name,
+      email: user.email,
+      role: user.roles?.[0],
+      telephone: user.telephone || '',
+      verified: user.verified === '1',
+      joined: new Date(user.joined).toLocaleString(),
+      source: user.source || 'WordPress'
+    }));
+
+    return res.json(users);
+
+  } catch (error) {
+    console.error(
+      error.response?.data || error.message
+    );
+
+    return res.status(500).json({
+      success: false,
+      error: error.response?.data || error.message
+    });
+  }
 });
 
 // Endpoint: Crear usuario (mock)
@@ -47,10 +56,11 @@ app.post('/api/users', async (req, res) => {
       'http://wordpress/wp-json/wp/v2/users',
       {
         username: newUser.email,
-        name: newUser.full_name,
+        first_name: newUser.full_name,
         email: newUser.email,
         password: 'Temp123456!',
         roles: ['subscriber'],
+        source: 'Dashboard',
         telephone: newUser.telephone,
         verified: newUser.verified
       },
@@ -63,6 +73,39 @@ app.post('/api/users', async (req, res) => {
     );
 
     return res.status(201).json(wpResponse.data);
+
+  } catch (error) {
+    console.error(
+      error.response?.data || error.message
+    );
+
+    return res.status(500).json({
+      success: false,
+      error: error.response?.data || error.message
+    });
+  }
+});
+
+app.put('/api/users/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const updatedUser = req.body;
+    const wpResponse = await axios.post(
+      `http://wordpress/wp-json/wp/v2/users/${userId}`,
+      {
+        name: updatedUser.full_name,
+        telephone: updatedUser.telephone,
+        verified: updatedUser.verified
+      },
+      {
+        auth: {
+          username: process.env.WORDPRESS_USERNAME,
+          password: process.env.WORDPRESS_PASSWORD
+        }
+      }
+    );
+
+    return res.json(wpResponse.data);
 
   } catch (error) {
     console.error(

@@ -72,6 +72,33 @@ export default function UsersPage() {
     setActiveModal('edit');
   };
 
+  const handleSaveChanges = async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.currentTarget);
+  try {
+    await fetch(
+      `http://localhost:4000/api/users/${selectedUser.id}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+          full_name: formData.get('full_name'),
+          telephone: formData.get('telephone'),
+          verified: formData.get('verified') === 'on'
+        })
+      }
+    );
+
+    await fetchUsers();
+    setActiveModal(null);
+  } catch (error) {
+    console.error('Error updating user:', error);
+  }
+};
+
   return (
     <main className="container">
       <header>
@@ -96,7 +123,6 @@ export default function UsersPage() {
                 <th>Source</th>
                 <th>Role</th>
                 <th>Verified</th>
-                <th>Synced</th>
                 <th></th>
               </tr>
             </thead>
@@ -111,10 +137,7 @@ export default function UsersPage() {
                   <td className="last-activity">{user.joined}</td>
                   <td className="last-activity">{user.source || '—'}</td>
                   <td><span className="badge">{user.role}</span></td>
-                  <td style={{ textAlign: 'center', opacity: 0.5 }}>
-                    {user.verified ? '✅' : '⊗'}
-                  </td>
-                  <td style={{ textAlign: 'center', opacity: 0.5 }}>🕒</td>
+                  <td>{user.verified ? 'Yes' : 'No'}</td>
                   <td style={{ textAlign: 'right' }}>
                     <button
                       onClick={() => handleEditClick(user)}
@@ -157,10 +180,9 @@ export default function UsersPage() {
       
               <div className="form-group">
                 <label>Role</label>
-                <select name="role"> {/* AGREGA NAME */}
-                  <option value="User">User</option>
-                  <option value="Admin">Admin</option>
-                </select>
+                <span className="text-sm text-gray-600">
+                  Subscriber
+                </span>
               </div>
       
               <div className="verified-row">
@@ -217,51 +239,55 @@ export default function UsersPage() {
               Update details for <strong>{selectedUser.full_name}</strong>
             </p>
 
-            <div className="form-group">
-              <label>Full Name</label>
-              <input 
-                type="text" 
-                defaultValue={selectedUser.full_name} 
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Email</label>
-              <p className="static-email">{selectedUser.email}</p>
-            </div>
-
-            <div className="form-group">
-              <label>Telephone <span style={{color: 'var(--text-dim)', fontWeight: 'normal'}}>(optional)</span></label>
-              <input 
-                type="text" 
-                defaultValue={selectedUser.telephone || ""} 
-                placeholder="+1 234 567 8900"
-              />
-            </div>
-
-            <div className="verified-row">
-              <label style={{ fontWeight: '500' }}>Verified</label>
-              <label className="switch">
+            <form onSubmit={handleSaveChanges}>
+              <div className="form-group">
+                <label>Full Name</label>
                 <input 
-                  type="checkbox" 
-                  defaultChecked={selectedUser.verified} 
+                  name="full_name"
+                  type="text" 
+                  defaultValue={selectedUser.full_name} 
                 />
-                <span className="slider"></span>
-              </label>
-            </div>
+              </div>
 
-            <div className="modal-footer">
-              <button className="btn-secondary" onClick={() => setActiveModal(null)}>
-                Cancel
-              </button>
-              <button className="btn-primary" onClick={() => setActiveModal(null)}>
-                Save Changes
-              </button>
-            </div>
+              <div className="form-group">
+                <label>Email</label>
+                <p className="static-email">{selectedUser.email}</p>
+              </div>
+
+              <div className="form-group">
+                <label>Telephone <span style={{color: 'var(--text-dim)', fontWeight: 'normal'}}>(optional)</span></label>
+                <input 
+                  name="telephone"
+                  type="text" 
+                  defaultValue={selectedUser.telephone || ""} 
+                  placeholder="+1 234 567 8900"
+                />
+              </div>
+
+              <div className="verified-row">
+                <label style={{ fontWeight: '500' }}>Verified</label>
+                <label className="switch">
+                  <input 
+                    name="verified"
+                    type="checkbox" 
+                    defaultChecked={selectedUser.verified} 
+                  />
+                  <span className="slider"></span>
+                </label>
+              </div>
+
+              <div className="modal-footer">
+                <button className="btn-secondary" onClick={() => setActiveModal(null)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn-primary">
+                  Save Changes
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
-
     </main>
   );
 }
